@@ -17,10 +17,15 @@ system is put together, not to be a drop-in working config.
 
 - **main** — a general-purpose agent (originally built and refined using Claude, currently
   running on GPT-5.4 via OpenAI Codex, with model fallback configured).
-- **example-agent** ("Scout") — a second agent bound to its own Telegram bot and its own
-  isolated workspace, demonstrating how OpenClaw supports multiple independent agents from
-  one gateway. Its workspace lives at `workspace/example-agent/`, matching the path in the
-  config.
+- **example-agent** ("Scout") — a planning and research agent bound to its own Telegram bot
+  and its own isolated workspace. It owns one long-running project at a time: gathering
+  material, tracking what's decided and what's still open, and surfacing next steps. Its
+  workspace lives at `workspace/example-agent/`, matching the path in the config.
+
+The split is by time horizon, not by topic: `main` handles the day, `example-agent` handles
+a project that runs for months. Each has its own memory, so neither crowds out the other.
+`workspace/example-agent/AGENTS.md` sets out when a second agent is worth having versus when
+the same thing should just be a skill on the first one.
 
 Each agent has its own workspace directory and agent directory, so context and files stay
 scoped per-agent rather than bleeding into each other.
@@ -47,7 +52,7 @@ workspace/                      # main agent's instructions, personality, memory
   HEARTBEAT.md / HEARTBEAT_RULES.md  # periodic proactive check-ins
   TOOLS.md                      # local environment notes (cameras, SSH, TTS, etc.)
   example-agent/                # a second, independent agent sharing the same gateway
-    AGENTS.md, IDENTITY.md      # its own instructions and persona ("Scout")
+    AGENTS.md, IDENTITY.md      # its own instructions and persona ("Scout", planning/research)
 ```
 
 Each agent has its own workspace, so two agents can run from one gateway with completely
