@@ -1,0 +1,172 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.4.5",
+    "lastTouchedAt": "2026-04-07T21:42:46.655Z"
+  },
+  "env": {
+    "shellEnv": {
+      "enabled": false
+    }
+  },
+  "auth": {
+    "profiles": {
+      "anthropic:default": {
+        "provider": "anthropic",
+        "mode": "api_key"
+      },
+      "anthropic:manual": {
+        "provider": "anthropic",
+        "mode": "token"
+      },
+      "openai-codex:default": {
+        "provider": "openai-codex",
+        "mode": "oauth"
+      },
+      "openai-codex:<your-email>": {
+        "provider": "openai-codex",
+        "mode": "oauth"
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openai-codex/gpt-5.4",
+        "fallbacks": [
+          "openai-codex/gpt-5.3-codex"
+        ]
+      },
+      "models": {
+        "openai-codex/gpt-5.4": {}
+      },
+      "workspace": "/Users/<you>/.openclaw/workspace",
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      }
+    },
+    "list": [
+      {
+        "id": "main",
+        "name": "main",
+        "workspace": "/Users/<you>/.openclaw/workspace",
+        "agentDir": "/Users/<you>/.openclaw/agents/main/agent",
+        "model": {
+          "primary": "openai-codex/gpt-5.4",
+          "fallbacks": [
+            "openai-codex/gpt-5.3-codex"
+          ]
+        }
+      },
+      {
+        "id": "example-agent",
+        "name": "Example Agent",
+        "workspace": "/Users/<you>/.openclaw/workspace/example-agent",
+        "agentDir": "/Users/<you>/.openclaw/agents/example-agent/agent",
+        "model": {
+          "primary": "openai-codex/gpt-5.4",
+          "fallbacks": [
+            "openai-codex/gpt-5.3-codex"
+          ]
+        }
+      }
+    ]
+  },
+  "tools": {
+    "web": {
+      "search": {
+        "enabled": true
+      },
+      "fetch": {
+        "enabled": false
+      }
+    }
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto",
+    "restart": true,
+    "ownerDisplay": "raw"
+  },
+  "hooks": {
+    "internal": {
+      "enabled": true,
+      "entries": {
+        "boot-md": {
+          "enabled": true
+        }
+      }
+    }
+  },
+  "channels": {
+    "telegram": {
+      "streaming": {
+        "mode": "partial"
+      },
+      "enabled": true,
+      "accounts": {
+        "default": {
+          "dmPolicy": "pairing",
+          "botToken": "<TELEGRAM_BOT_TOKEN_DEFAULT>",
+          "groupPolicy": "allowlist"
+        },
+        "example-agent": {
+          "botToken": "<TELEGRAM_BOT_TOKEN_EXAMPLE>",
+          "dmPolicy": "pairing",
+          "groupPolicy": "allowlist"
+        }
+      }
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local",
+    "bind": "loopback",
+    "auth": {
+      "mode": "token",
+      "token": "<GATEWAY_AUTH_TOKEN>",
+      "allowTailscale": false
+    },
+    "tailscale": {
+      "mode": "off",
+      "resetOnExit": false
+    },
+    "nodes": {
+      "denyCommands": [
+        "camera.snap",
+        "camera.clip",
+        "screen.record",
+        "calendar.add",
+        "contacts.add",
+        "reminders.add"
+      ]
+    }
+  },
+  "plugins": {
+    "entries": {
+      "telegram": {
+        "enabled": true,
+        "config": {}
+      },
+      "anthropic": {
+        "enabled": true
+      },
+      "openai": {
+        "enabled": true
+      }
+    }
+  },
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "bindings": [
+    {
+      "type": "route",
+      "agentId": "example-agent",
+      "match": {
+        "channel": "telegram",
+        "accountId": "example-agent"
+      }
+    }
+  ]
+}

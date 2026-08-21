@@ -1,0 +1,16 @@
+# Real config — never commit, contains live secrets
+openclaw.json
+
+# Runtime state / secrets
+credentials/
+logs/
+telegram/
+sessions/
+memory/
+workspace/**/memory/
+
+# Your real, filled-in USER.md (keep only the placeholder version in this repo)
+workspace/USER.md.real
+
+# OS junk
+.DS_Store
