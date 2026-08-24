@@ -1,4 +1,4 @@
-# My OpenClaw Agent Setup
+# My Agent Setup
 
 A personal [OpenClaw](https://github.com/openclaw/openclaw) gateway configuration for running always-on AI agents
 that I use for real, ongoing projects — not a one-off script, a system I actively maintain.
