@@ -30,13 +30,80 @@ the same thing should just be a skill on the first one.
 Each agent has its own workspace directory and agent directory, so context and files stay
 scoped per-agent rather than bleeding into each other.
 
-## What I actually do with this
+## What actually broke
 
-The interesting part isn't the config, it's what running these agents day to day taught me:
-getting an agent to respond well once is easy, getting it to hold up under repeated, real use
-is not. That's meant constantly refining prompts, catching subtly wrong output, deciding when
-to trust an agent to run unattended versus when to step in, and treating that process as an
-informal evals loop rather than a one-time setup.
+The rules in `workspace/AGENTS.md` aren't hypothetical — each one exists because something
+went wrong first. The useful ones:
+
+### 1. The agent promised instead of acting
+
+The most common and most costly failure. The agent would reply *"I'll patch that"* or
+*"Let me update the file"* — and then simply stop. No tool call, no edit, nothing. Asking
+*"is it done?"* often produced another confident *"yes, doing it now"*, still with no tool
+call. Work I believed was finished silently wasn't.
+
+This is what the **action contract** at the top of `AGENTS.md` exists for: if the work needs
+a tool call, the response must *contain* that tool call — never a promise of one in a later
+turn. The contract names the banned response shapes explicitly (`"I'll do X." [stop]`) and
+defines *done* as "tool call executed + result observed", because a vaguer instruction didn't
+hold.
+
+### 2. A tool returned plausible junk instead of failing
+
+Transcribing a voice memo, the Whisper API skill returned the string `(see attached image)`
+as the transcript. Not an error — a syntactically fine result that was completely wrong.
+It survived a WAV conversion and an HTTP retry, which ruled out a file-format problem and
+pointed at the provider.
+
+The lesson that stuck: an agent failing loudly is a good day. The dangerous case is output
+that looks right enough to pass, and the only defence is checking results against what you
+expected rather than whether the call returned 200.
+
+### 3. Fixing that broke the environment underneath
+
+Installing `openai-whisper` locally as a workaround pulled in `numpy 2.2.6`, which conflicts
+with the `tensorflow 2.16.2` my thesis pipeline needs (`numpy < 2.0`). The retry then failed
+with `RuntimeError: Numpy is not available`, and the thesis environment was quietly broken
+until NumPy was pinned back.
+
+An agent with shell access can leave your machine in a worse state than it found it while
+doing exactly what you asked. This is why `AGENTS.md` separates *safe local actions* from
+things that need permission, and why `trash > rm`.
+
+### 4. Unattended runs stall on interactive prompts
+
+A sub-agent kept hanging on a first-run theme/login picker. Neither `--output-format text`
+nor `--dangerously-skip-permissions` got past it, and the run just sat there. I wrote the
+script by hand instead.
+
+Automation assumes non-interactive tooling, and "it works when I run it" is not the same as
+"it works when nothing is watching". The **loop guard** — if a tool fails the same way twice,
+stop and report — comes from this: burning tokens retrying is worse than surfacing the block.
+
+### 5. Silent model fallback
+
+Sessions sometimes ran on a fallback model rather than the configured default. Behaviour
+changes with the model — noticeably in how much it hedges and how readily it calls tools —
+and nothing announces the switch. I only caught it because the session greeting reports the
+runtime model when it differs from the default.
+
+Worth knowing before you conclude your prompt regressed: check what actually served the turn.
+
+### What this taught me about prompts
+
+Vague instructions produce vague compliance. What measurably worked:
+
+- **Be directive, not suggestive.** "Read before edit. Always." beats "it's usually a good
+  idea to read the file first."
+- **Bullet multi-step actions.** A paragraph describing four things gets two of them done;
+  the same four as a numbered list gets four.
+- **Name the failure mode explicitly.** Listing banned response shapes worked far better than
+  positively describing the desired behaviour.
+- **Define done.** If "done" isn't defined in terms of an observable result, it drifts into
+  meaning "I intend to."
+
+None of this was measured formally — no eval suite, no held-out set. It's an informal loop:
+notice a failure, write a rule, watch whether it recurs. Worth being clear about that.
 
 ## Structure
 
