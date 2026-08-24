@@ -143,55 +143,10 @@ separate context, memory, and personality.
 > in the config). The config schema does change between releases — if a key is rejected, check it
 > against the version you installed rather than assuming this template is wrong.
 
-## Setup (if you want to run your own)
-
-1. Install OpenClaw and run onboarding once, so the standard directories exist:
-   ```sh
-   openclaw onboard --install-daemon
-   ```
-
-2. Create the directories this config expects. OpenClaw does **not** create the per-agent
-   directories for you, and it will fail to start if `agentDir` doesn't exist:
-   ```sh
-   mkdir -p ~/.openclaw/workspace/example-agent
-   mkdir -p ~/.openclaw/agents/main/agent
-   mkdir -p ~/.openclaw/agents/example-agent/agent
-   ```
-
-3. Copy `openclaw.config.template.json` to `~/.openclaw/openclaw.json` and replace every
-   placeholder (`<...>`):
-   - `<TELEGRAM_BOT_TOKEN_DEFAULT>` / `<TELEGRAM_BOT_TOKEN_EXAMPLE>` — one bot token per agent
-   - `<GATEWAY_AUTH_TOKEN>` — generate a long random string, e.g. `openssl rand -hex 32`.
-     Use token auth; do not set a plaintext password.
-   - `<you>` — your macOS username, in all five paths
-   - `<your-email>` — the account for your model provider's OAuth profile, or delete that
-     profile block if you don't use it
-
-4. Copy the contents of `workspace/` into `~/.openclaw/workspace/`, then fill in `USER.md`
-   with your own context. The agents read it every session, so vague input here means vague
-   output for weeks.
-
-5. Create the memory directories the agent instructions reference:
-   ```sh
-   mkdir -p ~/.openclaw/workspace/memory
-   mkdir -p ~/.openclaw/workspace/example-agent/memory
-   ```
-   `AGENTS.md` tells each agent to read `memory/YYYY-MM-DD.md` at the start of every session
-   and `HEARTBEAT_RULES.md` tracks state in `memory/heartbeat-state.json`. The agent creates
-   the files itself, but the directory needs to exist. These are gitignored here — they fill
-   up with personal context fast.
-
-6. Start it and confirm it's alive:
-   ```sh
-   openclaw gateway status
-   ```
-
-7. Never commit your real `openclaw.json` or a filled-in `USER.md`. See `.gitignore`.
-
 ## Security notes
 
-- The real config file contains live API tokens and a gateway auth token. It is **never**
+- The real config file contains live API tokens and a gateway auth token. It is **not**
   committed here.
-- Use token-based gateway auth only. Avoid setting a plaintext password in config.
+- Use token-based gateway auth. Avoid setting a plaintext password in config.
 - `credentials/`, `logs/`, and `telegram/` runtime state are all gitignored — they contain
   session data and pairing secrets that shouldn't leave the machine.
