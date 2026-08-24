@@ -1,0 +1,8 @@
+# This directory holds the agent's memory files.
+#
+#   YYYY-MM-DD.md        raw daily notes, written by the agent
+#   heartbeat-state.json last-checked timestamps for heartbeat tasks
+#
+# Contents are gitignored — they fill with personal context. The directory
+# itself is tracked because AGENTS.md instructs the agent to read from it
+# at the start of every session.

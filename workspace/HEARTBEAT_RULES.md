@@ -19,7 +19,7 @@ Batch periodic checks into `HEARTBEAT.md` instead of multiplying cron jobs.
 
 - Emails — anything urgent?
 - Calendar — next 24-48h?
-- Mentions — Twitter/social?
+- Mentions — Social?
 - Weather — relevant if your human is going out?
 
 Track in `memory/heartbeat-state.json`:

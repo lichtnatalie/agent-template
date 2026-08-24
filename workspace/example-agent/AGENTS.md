@@ -1,7 +1,7 @@
 # AGENTS.md - example-agent (Scout) workspace
 
-A second agent running from the same OpenClaw gateway as `main`, with its own workspace,
-its own Telegram bot binding, and its own memory. Nothing is shared with `main` — that
+A second agent running from the same gateway as `main`, with its own workspace,
+its own bot binding, and its own memory. Nothing is shared with `main` — that
 separation is the point.
 
 ## Why a second agent

@@ -6,8 +6,10 @@ credentials/
 logs/
 telegram/
 sessions/
-memory/
-workspace/**/memory/
+# Memory contents are personal — keep the directories, ignore what fills them
+memory/*
+workspace/**/memory/*
+!workspace/**/memory/.gitkeep
 
 # Your real, filled-in USER.md (keep only the placeholder version in this repo)
 workspace/USER.md.real

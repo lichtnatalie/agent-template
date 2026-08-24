@@ -18,5 +18,5 @@ and so everyday chat doesn't bury the project.
 
 ---
 
-This file defines a second agent's persona. Replace it with whatever yours should be —
+This file defines a second agent's persona. Replace it with whatever it should be —
 the structure is what matters: its own identity, its own workspace, its own memory.
